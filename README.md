@@ -13,5 +13,5 @@ install
 use 
 ======
 
-Inspect an element using Firebug. See a new tab when an element is select. Ask a 'how' question*. 
+Inspect an element using Firebug. See a new tab when an element is select. Ask a 'how' question*.
 *questions can only be choosen from a list of computed questions. 
