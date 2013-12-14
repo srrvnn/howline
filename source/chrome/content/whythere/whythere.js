@@ -27,7 +27,7 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
 /** @lends LinkInspectorPanel */
 {
     name: panelName,
-    title: "Link Inspector",
+    title: "Link Inspector 1",
     inspectable: true,
     inspectHighlightColor: "green",   
     // parentPanel: "html",
@@ -41,7 +41,7 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
         Firebug.Inspector.addListener(this); 
 
         if (FBTrace.DBG_WHYTHERE)
-            FBTrace.sysout("initialize function called");       
+            FBTrace.sysout("initialize panel function called");       
     },
 
     destroy: function(state)
@@ -51,7 +51,7 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
         Firebug.Inspector.removeListener(this);
 
         if (FBTrace.DBG_WHYTHERE)
-            FBTrace.sysout("destroy function called");       
+            FBTrace.sysout("destroy panel function called");       
     },
 
     show: function(state)
@@ -61,7 +61,7 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
         LinkInspectorPlate.defaultContent.replace({}, this.panelNode);
 
         if (FBTrace.DBG_WHYTHERE)
-            FBTrace.sysout("show function called");       
+            FBTrace.sysout("show panel function called");       
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -75,10 +75,24 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
 
     inspectNode: function(node)
     {
+
+        // compute all required values here, when an element is inspected.
+
         if (FBTrace.DBG_WHYTHERE)
             FBTrace.sysout("link-inspector; inspectNode(node: " + node.tagName + ")");
 
-        LinkInspectorPlate.linkUrl.replace({object: node}, this.panelNode);
+        var rect = node.getBoundingClientRect();
+        FBTrace.sysout("this element is at " + rect.top + "," + rect.right + "," + rect.bottom + "," + rect.left);
+
+        // create node with required values. 
+
+        var newnode = {
+
+            "x" : Math.round(rect.left * 100) / 100,
+            "y" : Math.round(rect.top * 100) / 100
+        };
+
+        LinkInspectorPlate.linkUrl.replace({object: newnode}, this.panelNode);
     },
 
     stopInspecting: function(node, canceled)
@@ -90,8 +104,8 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
         if (canceled)
             return;
 
-        if (node.href.indexOf("http") != 0)
-            return;
+        // if (node.href.indexOf("http") != 0)
+        //     return;
 
         LinkInspectorPlate.linkPreview.replace({object: node}, this.panelNode);
     },
@@ -99,12 +113,15 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
     supportsObject: function(object, type)
     {
 
+        // choose what kind of elemets to support. 
+
         if (object instanceof Element)
         {
 
-            // return 1; 
-            if (object.tagName.toLowerCase() == "a")
-                return 1;
+            return 1; // support all elements. 
+
+            // if (object.tagName.toLowerCase() == "a")
+                // return 1;
         }
 
         return 0;
@@ -140,17 +157,22 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
 
 var LinkInspectorPlate = domplate(
 {
+
+    // display required values here. 
+
     linkUrl:
         DIV({"class": "linkUrl"},
-            "$object.href"
+            "(" + "$object.x" + " , " + "$object.y" + ")"
         ),
 
     linkPreview:
-        IFRAME({"class": "linkPreview", "src": "$object.href"}),
+        DIV({"class": "linkPreview"},
+            "We will now display all dependent elements on this page."
+        ),
 
     defaultContent:
         DIV({"class": "defaultContent"},
-            "Use Firebug Inspector and try to inspect a link on the current page."
+            "Use Positions to try and move around an element on the current page."
         )
 });
 

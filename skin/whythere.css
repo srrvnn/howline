@@ -20,9 +20,9 @@
 }
 
 .linkPreview {
-    border: none;
-    width: 100%;
-    height: 100%;
+    text-align: center;
+    padding-top: 30px;
+    color: green;
 }
 
 /*************************************************************************************************/
