@@ -4,8 +4,8 @@
   xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
-    <em:id>helloworld@janodvarko.cz</em:id>
-    <em:version>0.0.1</em:version>
+    <em:id>whythere@srrvnn.usc.edu</em:id>
+    <em:version>0.1</em:version>
 
     <!-- Firefox -->
     <em:targetApplication>
@@ -17,9 +17,9 @@
     </em:targetApplication>
 
     <!-- Extension -->
-    <em:name>Hello World!</em:name>
-    <em:description>Firebug Hello World! Extension</em:description>
-    <em:creator>Jan Odvarko</em:creator>
-    <em:homepageURL>http://www.janodvarko.cz</em:homepageURL>
+    <em:name>Whythere</em:name>
+    <em:description>Firebug Whythere Extension</em:description>
+    <em:creator>Saravanan Ganesh, Apoorva Shetti</em:creator>
+    <em:homepageURL>https://github.com/srrvnn/howline</em:homepageURL>
   </Description>
 </RDF>

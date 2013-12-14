@@ -1,0 +1,3 @@
+content whythere chrome/content/whythere/ xpcnativewrappers=no
+skin whythere classic chrome/skin/classic
+overlay chrome://firebug/content/firebugOverlay.xul	chrome://whythere/content/whythere.xul
