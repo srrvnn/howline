@@ -9,9 +9,6 @@ FBL.ns(function() { with (FBL) {
 Components.utils.import("resource://firebug/firebug-trace-service.js");
 var FBTrace = traceConsoleService.getTracer("extensions.firebug");
 
-if (FBTrace.DBG_WHYTHERE)
-    FBTrace.sysout("Hello World!");
-
 // ********************************************************************************************* //
 // Panel
 
@@ -27,7 +24,7 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
 /** @lends LinkInspectorPanel */
 {
     name: panelName,
-    title: "Link Inspector 1",
+    title: "Positions",
     inspectable: true,
     inspectHighlightColor: "green",   
     // parentPanel: "html",
@@ -82,21 +79,22 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
             FBTrace.sysout("link-inspector; inspectNode(node: " + node.tagName + ")");
 
         var rect = node.getBoundingClientRect();
-        FBTrace.sysout("this element is at " + rect.top + "," + rect.right + "," + rect.bottom + "," + rect.left);
+        // FBTrace.sysout("this element is at " + rect.top + "," + rect.right + "," + rect.bottom + "," + rect.left);
 
         // create node with required values. 
 
         var newnode = {
 
             "x" : Math.round(rect.left * 100) / 100,
-            "y" : Math.round(rect.top * 100) / 100
-        };
+            "y" : Math.round(rect.top * 100) / 100            
+            };
 
         LinkInspectorPlate.linkUrl.replace({object: newnode}, this.panelNode);
     },
 
     stopInspecting: function(node, canceled)
     {
+
         if (FBTrace.DBG_WHYTHERE)
             FBTrace.sysout("link-inspector; stopInspecting(node: " + node.tagName +
                 ", canceled: " + canceled + ")");
@@ -107,7 +105,13 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
         // if (node.href.indexOf("http") != 0)
         //     return;
 
-        LinkInspectorPlate.linkPreview.replace({object: node}, this.panelNode);
+        var position_object = {
+            id : node.id,                      
+            handle : this,            
+            attributes : ["padding-top", "padding-right", "padding-bottom", "padding-left"]            
+        };        
+
+        LinkInspectorPlate.linkPreview.replace({object: position_object}, this.panelNode);
     },
 
     supportsObject: function(object, type)
@@ -150,7 +154,12 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
             FBTrace.sysout("link-inspector; Listener.onStopInspecting(context: " +
                 context.getTitle() + ", node: " + node.tagName + ", canceled: " +
                 canceled + ")");
-    },
+    },   
+
+    fuckthisshit: function(){
+
+        alert('hello');
+    }
 });
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -165,15 +174,28 @@ var LinkInspectorPlate = domplate(
             "(" + "$object.x" + " , " + "$object.y" + ")"
         ),
 
-    linkPreview:
-        DIV({"class": "linkPreview"},
-            "We will now display all dependent elements on this page."
+    linkPreview:        
+        DIV({"class": "buttons"},                        
+            FOR("item", "$object.attributes",
+                SPAN({"class":"button", onclick: "$handleClick", data_id: "$object.id"},
+     
+                   "$item"
+                )
+            )
         ),
 
     defaultContent:
         DIV({"class": "defaultContent"},
             "Use Positions to try and move around an element on the current page."
-        )
+        ), 
+
+    handleClick: function(event)
+    {            
+
+        // var element_id = event.target.getAttribute('data_id');        
+        // var element_attribute = event.target.innerHTML;
+
+    }
 });
 
 // ********************************************************************************************* //
@@ -227,7 +249,7 @@ Firebug.LinkInspectorModule = extend(Firebug.Module,
 // Registration
 
 Firebug.registerPanel(LinkInspectorPanel);
-Firebug.registerModule(Firebug.LinkInspectorModule);
+// Firebug.registerModule(Firebug.LinkInspectorModule);
 Firebug.registerStylesheet("chrome://whythere/skin/classic/whythere.css");
 
 // ********************************************************************************************* //
