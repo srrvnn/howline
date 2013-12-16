@@ -13,6 +13,7 @@ var FBTrace = traceConsoleService.getTracer("extensions.firebug");
 // Panel
 
 var panelName = "linkInspector";
+var global_node = "";
 
 /**
  * @panel This panel integrates with Firebug Inspector API and provides own logic
@@ -26,7 +27,8 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
     name: panelName,
     title: "Positions",
     inspectable: true,
-    inspectHighlightColor: "green",   
+    inspectHighlightColor: "green",       
+    inspecting_node : "",
     // parentPanel: "html",
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -89,11 +91,43 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
             "y" : Math.round(rect.top * 100) / 100            
             };
 
-        LinkInspectorPlate.linkUrl.replace({object: newnode}, this.panelNode);
+        LinkInspectorPlate.linkUrl.replace( {object: newnode}, this.panelNode);
     },
 
     stopInspecting: function(node, canceled)
-    {
+    {       
+
+        
+
+        // function to geth the path to the selected node        
+
+        function getPathTo(node) {
+
+            // if (node.id!=='')
+            //     return 'id("'+node.id+'")';
+            if (node===node.ownerDocument.body)
+                return node.tagName;
+
+            var ix= 0;
+            var siblings= node.parentNode.childNodes;
+            for (var i= 0; i<siblings.length; i++) {
+                var sibling= siblings[i];
+                if (sibling===node)
+                    return getPathTo(node.parentNode)+'/'+node.tagName+'['+(ix+1)+']';
+                if (sibling.nodeType===1 && sibling.tagName===node.tagName)
+                    ix++;
+            }
+        }        
+
+        // function showElement(node, xpath) {            
+
+        //     var element = node.ownerDocument.evaluate( "//"+xpath ,node.ownerDocument, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue;   
+        //     element.style.border = "6px solid black";
+        // }               
+
+        var node_xpath = getPathTo(node); 
+
+        // alert(node_xpath);
 
         if (FBTrace.DBG_WHYTHERE)
             FBTrace.sysout("link-inspector; stopInspecting(node: " + node.tagName +
@@ -102,16 +136,16 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
         if (canceled)
             return;
 
-        // if (node.href.indexOf("http") != 0)
-        //     return;
-
         var position_object = {
-            id : node.id,                      
-            handle : this,            
-            attributes : ["padding-top", "padding-right", "padding-bottom", "padding-left"]            
+            id : node.id,                                     
+            xpath : node_xpath,
+            attributes : ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft"]            
         };        
 
         LinkInspectorPlate.linkPreview.replace({object: position_object}, this.panelNode);
+
+        global_node = node.ownerDocument;
+        // alert(global_node);
     },
 
     supportsObject: function(object, type)
@@ -156,9 +190,16 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
                 canceled + ")");
     },   
 
-    fuckthisshit: function(){
+    fuckthisshit: function(xpath, attr){
 
-        alert('hello');
+        // alert("from fuckthishit: "+xpath);
+        // alert("from fuckthishit: "+attr);
+
+        var doc = global_node;        
+        var element = doc.evaluate( "//"+xpath ,doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue;                   
+        
+        element.style[attr] = "100px";
+        
     }
 });
 
@@ -177,7 +218,7 @@ var LinkInspectorPlate = domplate(
     linkPreview:        
         DIV({"class": "buttons"},                        
             FOR("item", "$object.attributes",
-                SPAN({"class":"button", onclick: "$handleClick", data_id: "$object.id"},
+                SPAN({"class":"button", onclick: "$handleClick", data_xpath: "$object.xpath"},
      
                    "$item"
                 )
@@ -190,11 +231,17 @@ var LinkInspectorPlate = domplate(
         ), 
 
     handleClick: function(event)
-    {            
+    {   
 
-        // var element_id = event.target.getAttribute('data_id');        
+        var x = event.target.getAttribute('data_xpath'); 
+        var a = event.target.innerHTML;
+
+        // alert("from handleClick: " + event.target.getAttribute('data_xpath'));
+        // alert("from handleClick: " + event.target.innerHTML);
+
+        LinkInspectorPanel.prototype.fuckthisshit(x, a);
+
         // var element_attribute = event.target.innerHTML;
-
     }
 });
 
