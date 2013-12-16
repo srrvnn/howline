@@ -4,8 +4,13 @@
 
 /* Style applied on the panel node. */
 .panelNode-linkInspector {
-    overflow: hidden;
+    overflow: scroll !important;
 }
+
+/*.container {
+
+    overflow: scroll !important;
+}*/
 
 .defaultContent {
     text-align: center;
@@ -19,20 +24,27 @@
     color: blue;
 }
 
-.buttons {
+.button-row {
     text-align: center;
-    padding-top: 30px;
+    padding: 10px; 
+    padding-left: 25px; 
+
     color: green;
+    /*border-top: 1px solid gray;*/
+    border-bottom: 1px solid gray;    
 }
 
-.button {
-    margin: 10px;    
-    background: 1px solid gray;
+.button-row:first-child {
+
+    background: #C8C8C8;
 }
 
-.elementid {
+.element {
+    padding-right: 25px;
+}
 
-    display: hidden;
+.plusbutton, .minusbutton {
+    margin: 5px;    
 }
 
 /*************************************************************************************************/
