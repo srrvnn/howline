@@ -655,10 +655,10 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
 
         var element = global_document.evaluate(xpath, global_document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue;                           
 
-        var orig = element.style.backgroundColor;
-        element.style.backgroundColor = 'yellow';
+        var orig = element.style.border;
+        element.style.border = '2px solid red';
         setTimeout(function(){
-            element.style.backgroundColor = orig;
+            element.style.border = orig;
         }, 1000);        
     }
 });
