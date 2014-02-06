@@ -1,7 +1,9 @@
+// tutorials page: http://www.softwareishard.com/blog/firebug-tutorial/extending-firebug-inspector-part-x/
+// full source code here : https://code.google.com/p/fbug/source/browse/#svn%2Fexamples%2Ffirebug1.7%2FLinkInspector
+
 /* See license.txt for terms of usage */
 
 FBL.ns(function() { with (FBL) {
-
 
 // ********************************************************************************************* //
 // Tracing 
@@ -33,8 +35,8 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
     title: "Whythere",
     inspectable: true,    
     inspectHighlightColor: "green",       
-    inspecting_node : "",    
-    // parentPanel: "html", // moves positioning panel to the side. TODO: make it work. 
+    inspecting_node : "",
+    // parentPanel: "html", // srrvnn: moves positioning panel to the side. TODO: make it work. 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Initialization
@@ -112,17 +114,15 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
         if (canceled)
             return;        
 
-        // testing jquery 
+        // srrvnn: testing jquery, TODO: find out how jquery can run on this page. 
 
-        // if (typeof jQuery != 'undefined') {
+        /* if (typeof jQuery != 'undefined') {
             
-        //     alert("this shows!");
-        // }
+            alert("this shows!");
+        } */
 
         // function to geth the path to the selected node  
-
-        // sourced from
-        // http://stackoverflow.com/questions/2631820/im-storing-click-coordinates-in-my-db-and-then-reloading-them-later-and-showing/2631931#2631931      
+        // function sourced from : http://stackoverflow.com/questions/2631820/im-storing-click-coordinates-in-my-db-and-then-reloading-them-later-and-showing/2631931#2631931     
 
         function getPathTo(node) {
 
@@ -142,7 +142,7 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
             }
         }      
 
-        function getOPathTo(node){
+        function getPathTo2(node){
 
             var comp, comps = [];
             var parent = null;
@@ -231,6 +231,7 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
         }    
 
         // function to increase values by one. 
+        // srrvnn: i am proud i wrote this in a few minutes :P
 
         function change_by_one(value, direction){
 
@@ -252,29 +253,15 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
             alert("new value after click "+ newvalue+unit);
         }
 
-        function isElementInViewport (el) {
-            var rect = el.getBoundingClientRect();
+        // function to detect visibility of an element    
 
-            return (
-                rect.top >= 0 &&
-                rect.left >= 0 &&
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
-                rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
-                );
-        }
-
-        function isElementVisible (element){
-
-            // alert(element.ownerDocument.title);
-        }
-
-        // function to detect visibility of an element sourced from:   /**
-        /* Author: Jason Farrell
-        * Author URI: http://useallfive.com/
-        *
-        * Description: Handles all things involving element visibility.
-        * Package URL: https://github.com/UseAllFive/ua5-js-utils
-        */ 
+		/**
+		* Author: Jason Farrell
+		* Author URI: http://useallfive.com/
+		*
+		* Description: Handles all things involving element visibility.
+		* Package URL: https://github.com/UseAllFive/ua5-js-utils
+		*/
 
         var VISIBILITY = (function() {
 
@@ -412,7 +399,8 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
 
         node.ownerDocument.getElementsByTagName('head')[0].appendChild(style);
 
-        // function to calculate dependent elements on page: 
+        // function to calculate affecting elements on page
+        // developed by apoorva shetti. 
 
         function findElements(element) {
 
@@ -480,28 +468,20 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
 
                                 // current_element.className = current_element.className +" increasePadding1";
 
+
+
                                 var newtarget_element_coordinates = getPageXY(element);              
 
                                 var current_element_padding = current_element.style["paddingTop"];
-                                var current_element_margin = current_element.style["marginTop"];
+                                var current_element_margin = current_element.style["marginTop"];                                
+
+                                // changing the padding and margin by 10px
 
                                 current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
                                 current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
                                 current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
                                 current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
                                 current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
-
-                                current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
-                                current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
-                                current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
-                                current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
-                                current_element.style["paddingTop"] = change_by_one(element.style["paddingTop"], "plus");
-
-                                current_element.style["marginTop"] = change_by_one(element.style["marginTop"], "plus"); 
-                                current_element.style["marginTop"] = change_by_one(element.style["marginTop"], "plus"); 
-                                current_element.style["marginTop"] = change_by_one(element.style["marginTop"], "plus"); 
-                                current_element.style["marginTop"] = change_by_one(element.style["marginTop"], "plus"); 
-                                current_element.style["marginTop"] = change_by_one(element.style["marginTop"], "plus"); 
 
                                 current_element.style["marginTop"] = change_by_one(element.style["marginTop"], "plus"); 
                                 current_element.style["marginTop"] = change_by_one(element.style["marginTop"], "plus"); 
@@ -570,6 +550,8 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
 
         var options_array =  new Array();
 
+        // pushing the click element first into the array to be displayed first. 
+
         var node_xpath = getPathTo(node);       
         var options_attributes = ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "marginTop", "marginRight", "marginBottom", "marginLeft"];            
 
@@ -584,6 +566,8 @@ LinkInspectorPanel.prototype = extend(Firebug.Panel,
 
         var array_xpath_elements = findElements(node);   
         // alert("Returned " + array_xpath_elements.length + " elements");        
+
+        // pushing all affecting elements into the array 
 
         for(var e = 0; e < array_xpath_elements.length; e++){
 
@@ -693,9 +677,11 @@ var LinkInspectorPlate = domplate(
 
     linkPreview: 
         DIV({"class" : "container"},
-            DIV({"class" : "button-row"},
-                "Element 0 is the clicked element. Subsequent Elements are the ones that affect it's position. Click on 'Element' to see it, Click on '+ and '-' to move them around."
-                ),            
+
+           	DIV({"class" : "button-row"},
+        		"Element 0 : Clicked Element. Elements 1.2.3.. : Affecting Elements. Click on 'Element' to see the element. Click on '+' and '-' to move them around."
+        		),
+
             FOR("object", "$array",
                 DIV({"class": "button-row"}, 
                     A({"class": "element", onclick: "$showElement", data_xpath: "$object.xpath"},
@@ -718,7 +704,8 @@ var LinkInspectorPlate = domplate(
 
     defaultContent:
         DIV({"class": "defaultContent"},
-            "Use the Inspector icon to click on an element to see other elements that affect it's position."
+
+            "Use the Inspector Icon to select an element and see other elements on the page that affect it's position."
         ), 
 
     changeAttribute: function(event)
